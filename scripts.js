@@ -20,9 +20,8 @@ $(function() {
                     method: 'GET'
 
                 }).then(function(data){
-
                     for(var i = 0; i<data.length; i++ ){
-                        var row = "<div id='"+data[i].id + "' class='table__row draggable'>" +
+                        var row = "<div name='"+data[i].userId +"' id='"+data[i].id + "' class='table__row draggable'>" +
                             "<div class='table__cell table__cell--short'>" + data[i].id + "</div>" +
                             "<div class='table__cell table__cell'>" + data[i].title + "</div>" +
                             "   </div>";
@@ -137,14 +136,14 @@ $(function() {
 
             document.onmousemove = drag.drag;
             document.onmouseup = drag.end;
-
+            drag.identifyTargets(true);
 
             return false;
         },
 
-        drag : function(objEvent)
-        {
+        drag : function(objEvent) {
             objEvent = objEvent || window.event;
+
 
             // Calculate new position
             var iCurrentY = objEvent.clientY;
@@ -181,6 +180,28 @@ $(function() {
             return iOffset;
         },
 
+
+        identifyTargets : function (bHighlight)
+        {
+            var strExisting = drag.objCurrent.parentNode.getAttribute('id');
+            var objList;
+
+            // Highlight the targets for the current drag item
+            for (var i = 0; i<drag.arTargets.length; i++)
+            {
+                objList = document.getElementById(drag.arTargets[i]);
+                if (bHighlight && drag.arTargets[i] != strExisting)
+                {
+                    objList.className = 'light table';
+                 
+                }
+                else
+                {
+                    objList.className = 'table';
+
+                }
+            }
+        },
 
         getTarget : function()
         {
@@ -238,7 +259,7 @@ $(function() {
             drag.objCurrent.style.left = '0px';
             drag.objCurrent.style.top = '0px';
             drag.objCurrent.style.zIndex = 'auto';
-
+            drag.identifyTargets(false);
         },
 
         end : function()
@@ -250,6 +271,7 @@ $(function() {
             document.onmousemove = null;
             document.onmouseup   = null;
             drag.objCurrent = null;
+            $('#user_2').removeClass('light');
         }
     };
 

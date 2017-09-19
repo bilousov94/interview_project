@@ -82,6 +82,6 @@ main {
     position: relative;
 }
 
-.highlight{
-    border: 2px solid green;
+.light{
+    background-color: #9ae56e;
 }
