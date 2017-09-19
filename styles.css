@@ -36,6 +36,7 @@ main {
     width: 48%;
     border: 1px solid #333;
     background-color: white;
+    height: max-content;
 }
 .table__header {
     background-color: #333;
@@ -71,6 +72,16 @@ main {
     text-align: right;
 }
 
-.hidden{
-    display: none;
+.draggable:hover
+{
+    background: #fc0;
+}
+.draggable
+{
+    cursor: move;
+    position: relative;
+}
+
+.highlight{
+    border: 2px solid green;
 }
