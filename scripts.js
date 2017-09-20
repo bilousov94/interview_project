@@ -1,5 +1,29 @@
 $(function() {
 
+    var baseURL = "https://jsonplaceholder.typicode.com";
+
+    function showAlbum(userId, tableId) {
+        $.ajax({
+            url: baseURL + '/users/' +userId+ '/albums',
+            method: 'GET'
+
+        }).then(function(data){
+            for(var i = 0; i<data.length; i++ ){
+                var row = "<div id='"+data[i].id + "' class='table__row draggable'>" +
+                    "<div class='table__cell table__cell--short'>" + data[i].id + "</div>" +
+                    "<div class='table__cell table__cell'>" + data[i].title + "</div>" +
+                    "   </div>";
+
+                var table = "#" + tableId;
+                $(table).append(row);
+
+                if(i == (data.length-1)){
+                    init();
+                }
+            }
+        });
+    }
+
     var App = {
 
         init: function(){
@@ -9,50 +33,36 @@ $(function() {
         },
 
         showData: function(){
-            var baseURL = "https://jsonplaceholder.typicode.com";
-
-            var numberOfUsers = 2;
-
-            for(var j = 1; j <= numberOfUsers; j++){
-
-                $.ajax({
-                    url: baseURL + '/users/' +j+ '/albums',
-                    method: 'GET'
-
-                }).then(function(data){
-                    for(var i = 0; i<data.length; i++ ){
-                        var row = "<div name='"+data[i].userId +"' id='"+data[i].id + "' class='table__row draggable'>" +
-                            "<div class='table__cell table__cell--short'>" + data[i].id + "</div>" +
-                            "<div class='table__cell table__cell'>" + data[i].title + "</div>" +
-                            "   </div>";
-                        var userId = "#user_" + data[i].userId;
-                        $(userId).append(row);
-
-                        if(i == (data.length-1)){
-                            init();
-                        }
-                    }
-                });
-
-            }
-
-
+            showAlbum(1, 'table_1');
+            showAlbum(2, 'table_2');
         },
 
         bindEvents: function() {
+
+            $('#pickOne').change(function(){
+                $('#table_1').children().not(".table__header").remove();
+                showAlbum($(this).val(), "table_1");
+            });
+
+            $('#pickTwo').change(function(){
+                $('#table_2').children().not(".table__header").remove();
+                showAlbum($(this).val(), "table_2");
+            });
+
             $(".draggable").on('click', init());
+
             $('.search_user_1').keyup(function () {
                 var str = $('.search_user_1 input').val();
                 var exp = new RegExp(str, 'i');
-                var el = $('#user_1').children().length;
+                var el = $('#table_1').children().length;
 
                 for(var i = 2; i <= el; i++){
-                    var text = $('#user_1 div:nth-child(' + i + ') div:nth-child(2)').text();
+                    var text = $('#table_1 div:nth-child(' + i + ') div:nth-child(2)').text();
                     if(text.match(exp)){
-                        $('#user_1 div:nth-child(' + i + ')').css("display", "");
-                        $('#user_1 div:nth-child(' + i + ') div:nth-child(2)').css("display", "");
+                        $('#table_1 div:nth-child(' + i + ')').css("display", "");
+                        $('#table_1 div:nth-child(' + i + ') div:nth-child(2)').css("display", "");
                     } else {
-                        $('#user_1 div:nth-child(' + i + ')').css("display", "none");
+                        $('#table_1 div:nth-child(' + i + ')').css("display", "none");
                     }
                 }
             });
@@ -60,15 +70,15 @@ $(function() {
             $('.search_user_2').keyup(function () {
                 var str = $('.search_user_2 input').val();
                 var exp = new RegExp(str, 'i');
-                var el = $('#user_2').children().length;
+                var el = $('#table_2').children().length;
 
                 for(var i = 2; i <= el; i++){
-                    var text = $('#user_2 div:nth-child(' + i + ') div:nth-child(2)').text();
+                    var text = $('#table_2 div:nth-child(' + i + ') div:nth-child(2)').text();
                     if(text.match(exp)){
-                        $('#user_2 div:nth-child(' + i + ')').css("display", "");
-                        $('#user_2 div:nth-child(' + i + ') div:nth-child(2)').css("display", "");
+                        $('#table_2 div:nth-child(' + i + ')').css("display", "");
+                        $('#table_2 div:nth-child(' + i + ') div:nth-child(2)').css("display", "");
                     } else {
-                        $('#user_2 div:nth-child(' + i + ')').css("display", "none");
+                        $('#table_2 div:nth-child(' + i + ')').css("display", "none");
                     }
                 }
             });
@@ -106,7 +116,7 @@ $(function() {
     var drag = {
         objCurrent : null,
 
-        arTargets : ['user_1', 'user_2'],
+        arTargets : ['table_1', 'table_2'],
 
         initialise : function(objNode)
         {
@@ -193,7 +203,7 @@ $(function() {
                 if (bHighlight && drag.arTargets[i] != strExisting)
                 {
                     objList.className = 'light table';
-                 
+
                 }
                 else
                 {
@@ -271,7 +281,14 @@ $(function() {
             document.onmousemove = null;
             document.onmouseup   = null;
             drag.objCurrent = null;
-            $('#user_2').removeClass('light');
+            $.ajax('http://jsonplaceholder.typicode.com/albums/30', {
+                method: 'PUT',
+                data: {
+                    userId: 4
+                }
+            }).then(function(data) {
+                console.log(data);
+            });
         }
     };
 

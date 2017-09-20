@@ -36,7 +36,6 @@ main {
     width: 48%;
     border: 1px solid #333;
     background-color: white;
-    height: max-content;
 }
 .table__header {
     background-color: #333;
@@ -62,30 +61,4 @@ main {
 }
 .table__cell:last-child {
     margin-right: 0px;
-}
-
-.search_user_1{
-    text-align: left;
-    float: left;
-}
-.search_user_2{
-    text-align: right;
-}
-
-.draggable:hover
-{
-    background: #fc0;
-}
-.draggable
-{
-    cursor: move;
-    position: relative;
-}
-
-.light{
-    background-color: #9ae56e;
-}
-
-.right{
-    float: right;
 }
