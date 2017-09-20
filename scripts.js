@@ -2,6 +2,9 @@ $(function() {
 
     var baseURL = "https://jsonplaceholder.typicode.com";
 
+    // function showAlbum make a call and display all data
+    // userId is user, whose albums you want to show and tableId is table where to show
+
     function showAlbum(userId, tableId) {
         $.ajax({
             url: baseURL + '/users/' +userId+ '/albums',
@@ -21,36 +24,43 @@ $(function() {
                     init();
                 }
             }
+
+            $('#' + tableId).attr('user_id', data[0].userId);
         });
     }
 
     var App = {
 
-        init: function(){
+        loadPage: function(){
 
-            App.showData();
+            App.showDefaultData();
             App.bindEvents();
         },
 
-        showData: function(){
+        //show Default data when you first load a page
+        showDefaultData: function(){
             showAlbum(1, 'table_1');
             showAlbum(2, 'table_2');
         },
 
         bindEvents: function() {
 
+            //call showAlbum function  when you change drop down input for TABLE 1
             $('#pickOne').change(function(){
                 $('#table_1').children().not(".table__header").remove();
                 showAlbum($(this).val(), "table_1");
             });
 
+        //call showAlbum function when you change drop down input for TABLE 2
             $('#pickTwo').change(function(){
                 $('#table_2').children().not(".table__header").remove();
                 showAlbum($(this).val(), "table_2");
             });
 
+            //call when you start dragging elements
             $(".draggable").on('click', init());
 
+            //search function for table 1
             $('.search_user_1').keyup(function () {
                 var str = $('.search_user_1 input').val();
                 var exp = new RegExp(str, 'i');
@@ -67,6 +77,7 @@ $(function() {
                 }
             });
 
+            //search function for table 2
             $('.search_user_2').keyup(function () {
                 var str = $('.search_user_2 input').val();
                 var exp = new RegExp(str, 'i');
@@ -86,22 +97,17 @@ $(function() {
         }
     };
 
-    function getElementsByClassName(objElement, strTagName, strClassName)
-    {
+    function getElementsByClassName(objElement, strTagName, strClassName) {
         var objCollection = objElement.getElementsByTagName(strTagName);
         var arReturn = [];
         var strClass, arClass, iClass, iCounter;
 
-        for(iCounter=0; iCounter<objCollection.length; iCounter++)
-        {
+        for(iCounter=0; iCounter<objCollection.length; iCounter++) {
             strClass = objCollection[iCounter].className;
-            if (strClass)
-            {
+            if (strClass) {
                 arClass = strClass.split(' ');
-                for (iClass=0; iClass<arClass.length; iClass++)
-                {
-                    if (arClass[iClass] == strClassName)
-                    {
+                for (iClass=0; iClass<arClass.length; iClass++) {
+                    if (arClass[iClass] == strClassName) {
                         arReturn.push(objCollection[iCounter]);
                         break;
                     }
@@ -113,29 +119,26 @@ $(function() {
         return (arReturn);
     }
 
+    //drag and drop effect
     var drag = {
         objCurrent : null,
 
-        arTargets : ['table_1', 'table_2'],
+        arTargets : ['table_1', 'table_2'],  // all tables IDs
 
-        initialise : function(objNode)
-        {
+        initialise : function(objNode) {
             objNode.onmousedown = drag.start;
 
         },
 
-        removePopup : function()
-        {
+        removePopup : function() {
             var objContext = document.getElementById('popup');
 
-            if (objContext)
-            {
+            if (objContext) {
                 objContext.parentNode.removeChild(objContext);
             }
         },
 
-        start : function(objEvent)
-        {
+        start : function(objEvent) {
             objEvent = objEvent || window.event;
             drag.removePopup();
             drag.objCurrent = this;
@@ -173,15 +176,12 @@ $(function() {
             return false;
         },
 
-        calculatePosition : function (objElement, strOffset)
-        {
+        calculatePosition : function (objElement, strOffset) {
             var iOffset = 0;
 
             // Get offset position in relation to parent nodes
-            if (objElement.offsetParent)
-            {
-                do
-                {
+            if (objElement.offsetParent) {
+                do {
                     iOffset += objElement[strOffset];
                     objElement = objElement.offsetParent;
                 } while (objElement);
@@ -191,40 +191,34 @@ $(function() {
         },
 
 
-        identifyTargets : function (bHighlight)
-        {
+        identifyTargets : function (Highlight) {
             var strExisting = drag.objCurrent.parentNode.getAttribute('id');
             var objList;
 
             // Highlight the targets for the current drag item
-            for (var i = 0; i<drag.arTargets.length; i++)
-            {
+            for (var i = 0; i<drag.arTargets.length; i++) {
                 objList = document.getElementById(drag.arTargets[i]);
-                if (bHighlight && drag.arTargets[i] != strExisting)
-                {
+                if (Highlight && drag.arTargets[i] != strExisting) {
                     objList.className = 'light table';
 
                 }
-                else
-                {
+                else {
                     objList.className = 'table';
 
                 }
             }
         },
 
-        getTarget : function()
-        {
+        getTarget : function() {
             var strExisting = drag.objCurrent.parentNode.getAttribute('id');
             var iCurrentLeft = drag.calculatePosition(drag.objCurrent, 'offsetLeft');
             var iCurrentTop = drag.calculatePosition(drag.objCurrent, 'offsetTop');
             var iTolerance = 40;
             var objList, iLeft, iRight, iTop, iBottom, iCounter;
 
-            for (iCounter=0; iCounter<drag.arTargets.length; iCounter++)
-            {
-                if (drag.arTargets[iCounter] != strExisting)
-                {
+            for (iCounter=0; iCounter<drag.arTargets.length; iCounter++) {
+                if (drag.arTargets[iCounter] != strExisting) {
+
                     // Get position of the list
                     objList = document.getElementById(drag.arTargets[iCounter]);
                     iLeft = drag.calculatePosition(objList, 'offsetLeft') - iTolerance;
@@ -233,8 +227,7 @@ $(function() {
                     iBottom = iTop + objList.offsetHeight + iTolerance;
 
                     // Determine if current object is over the target
-                    if (iCurrentLeft > iLeft && iCurrentLeft < iRight && iCurrentTop > iTop && iCurrentTop < iBottom)
-                    {
+                    if (iCurrentLeft > iLeft && iCurrentLeft < iRight && iCurrentTop > iTop && iCurrentTop < iBottom) {
                         return drag.arTargets[iCounter];
                     }
                 }
@@ -244,14 +237,12 @@ $(function() {
             return '';
         },
 
-        dropObject : function(strTarget)
-        {
+        dropObject : function(strTarget) {
             var objClone, objOriginal, objTarget;
 
             drag.removePopup();
 
-            if (strTarget.length > 0)
-            {
+            if (strTarget.length > 0) {
                 // Copy node to new target
                 objOriginal = drag.objCurrent.parentNode;
                 objClone = drag.objCurrent.cloneNode(true);
@@ -264,6 +255,12 @@ $(function() {
                 drag.initialise(objClone);
 
 
+
+                var userIdForUpdate = objTarget.getAttribute('user_id');
+                var currentAlbum = drag.objCurrent.getAttribute('id');
+
+                changeUserId(userIdForUpdate, currentAlbum);
+
             }
             // Reset properties
             drag.objCurrent.style.left = '0px';
@@ -272,8 +269,7 @@ $(function() {
             drag.identifyTargets(false);
         },
 
-        end : function()
-        {
+        end : function() {
             var strTarget = drag.getTarget();
 
             drag.dropObject(strTarget);
@@ -281,24 +277,27 @@ $(function() {
             document.onmousemove = null;
             document.onmouseup   = null;
             drag.objCurrent = null;
-            $.ajax('http://jsonplaceholder.typicode.com/albums/30', {
-                method: 'PUT',
-                data: {
-                    userId: 4
-                }
-            }).then(function(data) {
-                console.log(data);
-            });
+
         }
     };
 
-    function init ()
-    {
+    //make a request to change userID for current album
+    function changeUserId (userId, albumId) {
+        $.ajax('http://jsonplaceholder.typicode.com/albums/' + albumId, {
+            method: 'PUT',
+            data: {
+                userId: userId
+            }
+        }).then(function(data) {
+            console.log(data);
+        });
+    }
+
+    function init () {
         var objItems = getElementsByClassName(document, 'div', 'draggable');
         var iCounter;
 
-        for (iCounter=0; iCounter<objItems.length; iCounter++)
-        {
+        for (iCounter=0; iCounter<objItems.length; iCounter++) {
             // Set initial values so can be moved
             objItems[iCounter].style.top = '0px';
             objItems[iCounter].style.left = '0px';
@@ -310,6 +309,6 @@ $(function() {
         objItems = null;
     }
 
-    App.init();
+    App.loadPage();
 
 });
